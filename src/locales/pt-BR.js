@@ -1,0 +1,14 @@
+export const textRnaTitle = 'Título RNA';
+export const textEnterYourAge = 'Informe a sua idade:';
+export const textSelectYourAge = 'Selecione a sua idade:';
+export const textGender = 'Gênero:';
+export const textSelectGender = 'Selecione o gênero...';
+export const textMale = 'Masculino';
+export const textFemale = 'Feminino';
+export const textSelectMedication = 'Selecione a Medicação:';
+export const textSelectMedicationOption = 'Selecione a medicação...';
+export const textClearForm = 'Limpar Formulário';
+export const textSubmit = 'Enviar';
+export const textYes = 'Sim';
+export const textNo = 'Não';
+export const textEnterYourName = 'Digite seu nome...';
