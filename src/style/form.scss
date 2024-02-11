@@ -1,5 +1,42 @@
-.header-rna,
-.questions-container {
+@import url('./fonts.css');
+body {
+  background-color: #00A67E;
+  font-family: var(--font-primary);
+}
+.form-container {
   width: 50%;
   margin: 0 auto;
+  background-color: azure;
+  border-radius: 15px;
+
+  .header-rna {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  .questions-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 90%;
+    overflow: hidden;
+    .container-input-name {
+      p {
+        margin-bottom: 2px;
+      }
+      .input-name {
+        width: 350px;
+      }
+    }
+
+    .select-age_gender {
+      display: flex;
+      gap: 70px;
+
+      p {
+        margin-bottom: 2px;
+      }
+    }
+  }
 }

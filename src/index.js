@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./style/form.scss";
-import App from "./components/App";
+//import "./style/form.scss";
+import App from "./components/widget-form/App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

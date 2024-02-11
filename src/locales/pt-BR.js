@@ -1,5 +1,6 @@
 export const textRnaTitle = 'Título RNA';
-export const textEnterYourAge = 'Informe a sua idade:';
+export const textEnterName = 'Nome:';
+export const textEnterYourAge = 'Informe a idade:';
 export const textSelectYourAge = 'Selecione a sua idade:';
 export const textGender = 'Gênero:';
 export const textSelectGender = 'Selecione o gênero...';
