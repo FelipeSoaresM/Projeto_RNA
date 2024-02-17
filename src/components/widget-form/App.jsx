@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import TextField from "@mui/material/TextField";
+//import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
@@ -14,16 +14,16 @@ import "../../style/form.scss";
 
 export default function MyForm() {
   const [isLoading, setIsLoading] = useState(true);
-  const [name, setName] = useState("");
+  //const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [questions, setQuestions] = useState({});
   const [selectedMedication, setSelectedMedication] = useState(null);
   const [gender, setGender] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
+  // const handleNameChange = (event) => {
+  //   setName(event.target.value);
+  // };
 
   const handleAgeChange = (event) => {
     setAge(event.target.value);
@@ -115,7 +115,7 @@ export default function MyForm() {
   };
 
   const handleClearForm = () => {
-    setName("");
+    //setName("");
     setAge("");
     setQuestions({});
     setSelectedMedication("");
@@ -146,128 +146,137 @@ export default function MyForm() {
             className="input-name"
           />
         </div> */}
-        <div className="select-age_gender">
-          <Box>
-            <p>{pt_BR.textEnterYourAge}</p>
-            <Select
-              value={age}
-              onChange={handleAgeChange}
-              displayEmpty
-              className="age-select"
-            >
-              <MenuItem disabled value="">
-                {pt_BR.textSelectYourAge}
-              </MenuItem>
-              {[...Array(101).keys()].map((age) => (
-                <MenuItem key={age} value={age}>
-                  {age}
+        <div className="select-age_gender_medications">
+          <div>
+            <Box className="select-gender">
+              <p>{pt_BR.textGender}</p>
+              <Select
+                value={gender}
+                onChange={handleGenderChange}
+                displayEmpty
+                placeholder={pt_BR.textSelectGender}
+              >
+                <MenuItem disabled value="">
+                  {pt_BR.textSelectGender}
                 </MenuItem>
-              ))}
-            </Select>
-          </Box>
-          <Box>
-            <p>{pt_BR.textGender}</p>
-            <Select
-              value={gender}
-              onChange={handleGenderChange}
-              displayEmpty
-              placeholder={pt_BR.textSelectGender}
-            >
-              <MenuItem disabled value="">
-                {pt_BR.textSelectGender}
-              </MenuItem>
-              <MenuItem value="male">{pt_BR.textMale}</MenuItem>
-              <MenuItem value="female">{pt_BR.textFemale}</MenuItem>
-            </Select>
-          </Box>
-        </div>
+                <MenuItem value="male">{pt_BR.textMale}</MenuItem>
+                <MenuItem value="female">{pt_BR.textFemale}</MenuItem>
+              </Select>
+            </Box>
+          </div>
 
-        <div className="select-age_gender_medication">
-          <Box>
-            <p>{pt_BR.textSelectMedication}</p>
-            <Select
-              value={selectedMedication}
-              onChange={handleMedicationChange}
-            >
-              <MenuItem disabled value="">
-                {pt_BR.textSelectMedication}
-              </MenuItem>
-              {medications.map((medication, index) => (
-                <MenuItem key={index} value={index}>
-                  {medication}
+          <div>
+            <Box className="select-age">
+              <p>{pt_BR.textEnterYourAge}</p>
+              <Select
+                value={age}
+                onChange={handleAgeChange}
+                displayEmpty
+                className="age-select"
+              >
+                <MenuItem disabled value="">
+                  {pt_BR.textSelectYourAge}
                 </MenuItem>
-              ))}
-            </Select>
-          </Box>
+                {[...Array(101).keys()].map((age) => (
+                  <MenuItem key={age} value={age}>
+                    {age}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
+          </div>
+
+          <div>
+            <Box className="select-medication">
+              <p>{pt_BR.textSelectMedication}</p>
+              <Select
+                value={selectedMedication}
+                onChange={handleMedicationChange}
+                displayEmpty
+              >
+                <MenuItem disabled value="">
+                  {pt_BR.textSelectMedicationOption}
+                </MenuItem>
+                {medications.map((medication, index) => (
+                  <MenuItem key={index} value={index}>
+                    {medication}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
+          </div>
         </div>
 
-        <div className="questions-one">
-          {questionsPart1.map((question) => (
-            <Box key={question.number}>
-              <p>{question.title}</p>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={
-                      questions[`question${question.number}`]?.value === 1
-                    }
-                    onChange={handleQuestionChange}
-                    name={`question${question.number}`}
-                    value="yes"
-                  />
-                }
-                label={pt_BR.textYes}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={
-                      questions[`question${question.number}`]?.value === 0
-                    }
-                    onChange={handleQuestionChange}
-                    name={`question${question.number}`}
-                    value="no"
-                  />
-                }
-                label={pt_BR.textNo}
-              />
-            </Box>
-          ))}
+        <div className="container_questions">
+          <div className="questions-table-one">
+            {questionsPart1.map((question) => (
+              <Box key={question.number} className="questions">
+                <p>{question.title}</p>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={
+                        questions[`question${question.number}`]?.value === 1
+                      }
+                      onChange={handleQuestionChange}
+                      name={`question${question.number}`}
+                      value="yes"
+                    />
+                  }
+                  label={pt_BR.textYes}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={
+                        questions[`question${question.number}`]?.value === 0
+                      }
+                      onChange={handleQuestionChange}
+                      name={`question${question.number}`}
+                      value="no"
+                    />
+                  }
+                  label={pt_BR.textNo}
+                />
+              </Box>
+            ))}
+          </div>
+
+          <div className="questions-table-two">
+            {questionsPart2.map((question) => (
+              <Box key={question.number} className="questions">
+                <p>{question.title}</p>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={
+                        questions[`question${question.number}`]?.value === 1
+                      }
+                      onChange={handleQuestionChange}
+                      name={`question${question.number}`}
+                      value="yes"
+                    />
+                  }
+                  label={pt_BR.textYes}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={
+                        questions[`question${question.number}`]?.value === 0
+                      }
+                      onChange={handleQuestionChange}
+                      name={`question${question.number}`}
+                      value="no"
+                    />
+                  }
+                  label={pt_BR.textNo}
+                />
+              </Box>
+            ))}
+          </div>
         </div>
 
-        <div className="questions-part-2">
-          {questionsPart2.map((question) => (
-            <Box key={question.number}>
-              <p>{question.title}</p>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={
-                      questions[`question${question.number}`]?.value === 1
-                    }
-                    onChange={handleQuestionChange}
-                    name={`question${question.number}`}
-                    value="yes"
-                  />
-                }
-                label={pt_BR.textYes}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={
-                      questions[`question${question.number}`]?.value === 0
-                    }
-                    onChange={handleQuestionChange}
-                    name={`question${question.number}`}
-                    value="no"
-                  />
-                }
-                label={pt_BR.textNo}
-              />
-            </Box>
-          ))}
-        </div>
         <div className="error-message">
           {errorMessage && <p>{errorMessage}</p>}
         </div>
