@@ -4983,6 +4983,13 @@
   dependencies:
     "@typescript-eslint/utils" "^5.58.0"
 
+"eslint-plugin-testing-library@^6.2.0":
+  "integrity" "sha512-+LCYJU81WF2yQ+Xu4A135CgK8IszcFcyMF4sWkbiu6Oj+Nel0TrkZq/HvDw0/1WuO3dhDQsZA/OpEMGd0NfcUw=="
+  "resolved" "https://registry.npmjs.org/eslint-plugin-testing-library/-/eslint-plugin-testing-library-6.2.0.tgz"
+  "version" "6.2.0"
+  dependencies:
+    "@typescript-eslint/utils" "^5.58.0"
+
 "eslint-scope@^5.1.1":
   "integrity" "sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw=="
   "resolved" "https://registry.npmjs.org/eslint-scope/-/eslint-scope-5.1.1.tgz"

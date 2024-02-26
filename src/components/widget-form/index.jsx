@@ -30,14 +30,21 @@ export default function MyForm() {
     setAge(event.target.value);
   };
 
-  const handleQuestionChange = (event) => {
-    const { name, value } = event.target;
-    const questionValue = value === "yes" ? 1 : 0;
-    setQuestions({
-      ...questions,
-      [name]: { value: questionValue },
-    });
+  const handleQuestionChange = (event, questionNumber, questionTitle) => {
+    const { value } = event.target;
+    //const questionValue = value === "1" ? 1 : 0;
+    setQuestions((prevQuestions) => ({
+      ...prevQuestions,
+      [`question${questionNumber}`]: {
+        title: questionTitle,
+        value: value,
+      },
+    }));
   };
+
+  useEffect(() => {
+    console.log("Lista atualizada:", questions);
+  }, [questions]);
 
   const handleMedicationChange = (event) => {
     setSelectedMedication(event.target.value);
@@ -203,7 +210,11 @@ export default function MyForm() {
                   <SelectWithPlaceholder
                     value={questions[`question${question.number}`]?.value || ""}
                     onChange={(event) =>
-                      handleQuestionChange(event, question.number)
+                      handleQuestionChange(
+                        event,
+                        question.number,
+                        question.title
+                      )
                     }
                     placeholder={pt_BR.textReponseSelect}
                     options={[
@@ -211,6 +222,8 @@ export default function MyForm() {
                       { value: 1, label: pt_BR.textYes },
                       { value: 0, label: pt_BR.textNo },
                     ]}
+                    questionNumber={question.number}
+                    questionTitle={question.title}
                   />
                 </Box>
               ))}
@@ -225,7 +238,11 @@ export default function MyForm() {
                   <SelectWithPlaceholder
                     value={questions[`question${question.number}`]?.value || ""}
                     onChange={(event) =>
-                      handleQuestionChange(event, question.number)
+                      handleQuestionChange(
+                        event,
+                        question.number,
+                        question.title
+                      )
                     }
                     placeholder={pt_BR.textReponseSelect}
                     options={[
@@ -233,6 +250,8 @@ export default function MyForm() {
                       { value: 1, label: pt_BR.textYes },
                       { value: 0, label: pt_BR.textNo },
                     ]}
+                    questionNumber={question.number}
+                    questionTitle={question.title}
                   />
                 </Box>
               ))}
