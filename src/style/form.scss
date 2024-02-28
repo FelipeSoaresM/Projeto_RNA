@@ -51,9 +51,12 @@ body {
           width: calc(26.33% - 10px);
           margin-bottom: 20px;
           margin-left: 15px;
-          p {
-            font-size: 15px;
+          .title {
+            font-size: 12px;
             margin-bottom: 5px;
+          }
+          p {
+            display: none;
           }
         }
       }
@@ -65,9 +68,12 @@ body {
           width: calc(26.33% - 10px);
           margin-bottom: 20px;
           margin-left: 15px;
-          p {
-            font-size: 15px;
+          .title {
+            font-size: 12px;
             margin-bottom: 5px;
+          }
+          p {
+            display: none;
           }
         }
       }
@@ -83,9 +89,12 @@ body {
         width: calc(26.33% - 10px);
         margin-bottom: 20px;
         margin-left: 15px;
-        p {
-          font-size: 15px;
+        .title {
+          font-size: 12px;
           margin-bottom: 5px;
+        }
+        p {
+          display: none;
         }
       }
     }

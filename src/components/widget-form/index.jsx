@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 //import TextField from "@mui/material/TextField";
 // import Select from "@mui/material/Select";
 // import MenuItem from "@mui/material/MenuItem";
@@ -15,24 +15,19 @@ import SelectWithPlaceholder from "../widget-select";
 
 export default function MyForm() {
   const [isLoading, setIsLoading] = useState(true);
-  //const [name, setName] = useState("");
+
   const [age, setAge] = useState("");
   const [questions, setQuestions] = useState({});
   const [selectedMedication, setSelectedMedication] = useState("");
   const [gender, setGender] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
-  // const handleNameChange = (event) => {
-  //   setName(event.target.value);
-  // };
-
-  const handleAgeChange = (event) => {
-    setAge(event.target.value);
-  };
+  const [ageError, setAgeError] = useState(false);
+  const [questionErrors, setQuestionErrors] = useState({});
+  const [medicationError, setMedicationError] = useState(false);
+  const [genderError, setGenderError] = useState(false);
 
   const handleQuestionChange = (event, questionNumber, questionTitle) => {
     const { value } = event.target;
-    //const questionValue = value === "1" ? 1 : 0;
     setQuestions((prevQuestions) => ({
       ...prevQuestions,
       [`question${questionNumber}`]: {
@@ -40,14 +35,19 @@ export default function MyForm() {
         value: value,
       },
     }));
-  };
 
-  useEffect(() => {
-    console.log("Lista atualizada:", questions);
-  }, [questions]);
+    setQuestionErrors((prevErrors) => ({
+      ...prevErrors,
+      [`question${questionNumber}`]: false,
+    }));
+  };
 
   const handleMedicationChange = (event) => {
     setSelectedMedication(event.target.value);
+  };
+
+  const handleAgeChange = (event) => {
+    setAge(event.target.value);
   };
 
   const handleGenderChange = (event) => {
@@ -58,15 +58,8 @@ export default function MyForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const unansweredQuestions = [];
-    for (let i = 1; i <= 19; i++) {
-      if (
-        !questions[`question${i}`]?.value &&
-        questions[`question${i}`]?.value !== 0
-      ) {
-        unansweredQuestions.push(`Questão ${i}`);
-      }
-    }
+    const unansweredQuestions = findUnansweredQuestions();
+
     if (unansweredQuestions.length === 0) {
       const itemsToSend = {
         Sexo: gender,
@@ -109,27 +102,92 @@ export default function MyForm() {
       //   const responseData = await response.json();
       //   console.log("Resposta da API:", responseData);
 
-      //   setErrorMessage("");
       // } catch (error) {
-      //   setErrorMessage(`Erro ao enviar os dados para a API: ${error.message}`);
+      //   console.error(`Erro ao enviar os dados para a API: ${error.message}`);
       // }
     } else {
-      setErrorMessage(
-        `Por favor, responda as seguintes perguntas: ${unansweredQuestions.join(
-          ", "
-        )}`
-      );
+      validateGender();
+      validateAge();
+      validateMedication();
+      unansweredQuestions.forEach((question) => {
+        if (question.startsWith("question")) {
+          const questionNumber = question.substring(8);
+          setQuestionErrors((prevErrors) => ({
+            ...prevErrors,
+            [`question${questionNumber}`]: true,
+          }));
+        }
+      });
     }
   };
 
+  const findUnansweredQuestions = () => {
+    const unansweredQuestions = [];
+    for (let i = 1; i <= 19; i++) {
+      const questionTitle = `question${i}`;
+      if (
+        !questions[questionTitle]?.value &&
+        questions[questionTitle]?.value !== 0
+      ) {
+        unansweredQuestions.push(questionTitle);
+      }
+    }
+    return unansweredQuestions;
+  };
+
   const handleClearForm = () => {
-    //setName("");
     setAge("");
     setQuestions({});
     setSelectedMedication("");
     setGender("");
     setErrorMessage("");
   };
+
+  const validateGender = useCallback(() => {
+    if (gender === "" || gender === null || gender === undefined) {
+      setGenderError(true);
+    } else {
+      setGenderError(false);
+    }
+  }, [gender]);
+
+  useEffect(() => {
+    if (gender !== "") {
+      validateGender();
+    }
+  }, [gender, validateGender]);
+
+  const validateAge = useCallback(() => {
+    if (age === "" || age === null || age === undefined) {
+      setAgeError(true);
+    } else {
+      setAgeError(false);
+    }
+  }, [age]);
+
+  useEffect(() => {
+    if (age !== "") {
+      validateAge();
+    }
+  }, [age, validateAge]);
+
+  const validateMedication = useCallback(() => {
+    if (
+      selectedMedication === "" ||
+      selectedMedication === null ||
+      selectedMedication === undefined
+    ) {
+      setMedicationError(true);
+    } else {
+      setMedicationError(false);
+    }
+  }, [selectedMedication]);
+
+  useEffect(() => {
+    if (selectedMedication !== "") {
+      validateMedication();
+    }
+  }, [selectedMedication, validateMedication]);
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -157,8 +215,9 @@ export default function MyForm() {
           <div className="container-box-one">
             <div className="select-age_gender_medications">
               <Box className="container-select">
-                <p>{pt_BR.textGender}</p>
+                <span className="title">{pt_BR.textGender}</span>
                 <SelectWithPlaceholder
+                  id="gender"
                   value={gender}
                   onChange={handleGenderChange}
                   placeholder={pt_BR.textSelectGender}
@@ -167,12 +226,14 @@ export default function MyForm() {
                     { value: 1, label: pt_BR.textMale },
                     { value: 0, label: pt_BR.textFemale },
                   ]}
+                  error={genderError || gender === null || gender === undefined}
                 />
               </Box>
 
               <Box className="container-select">
-                <p>{pt_BR.textEnterYourAge}</p>
+                <span className="title">{pt_BR.textEnterYourAge}</span>
                 <SelectWithPlaceholder
+                  id="age"
                   value={age}
                   onChange={handleAgeChange}
                   placeholder={pt_BR.textSelectYourAge}
@@ -183,12 +244,14 @@ export default function MyForm() {
                       label: i,
                     })),
                   ]}
+                  error={ageError || age === null || age === undefined}
                 />
               </Box>
 
               <Box className="container-select">
-                <p>{pt_BR.textSelectMedication}</p>
+                <span className="title">{pt_BR.textSelectMedication}</span>
                 <SelectWithPlaceholder
+                  id="selectedMedication"
                   value={selectedMedication}
                   onChange={handleMedicationChange}
                   placeholder={pt_BR.textSelectMedicationOption}
@@ -199,6 +262,11 @@ export default function MyForm() {
                       label: medication,
                     })),
                   ]}
+                  error={
+                    medicationError ||
+                    selectedMedication === null ||
+                    selectedMedication === undefined
+                  }
                 />
               </Box>
             </div>
@@ -206,7 +274,7 @@ export default function MyForm() {
             <div className="questions-table-one">
               {questionsPart1.map((question) => (
                 <Box key={question.number} className="container-select">
-                  <p>{question.title}</p>
+                  <span className="title">{question.title}</span>
                   <SelectWithPlaceholder
                     value={questions[`question${question.number}`]?.value || ""}
                     onChange={(event) =>
@@ -222,6 +290,7 @@ export default function MyForm() {
                       { value: 1, label: pt_BR.textYes },
                       { value: 0, label: pt_BR.textNo },
                     ]}
+                    error={questionErrors[`question${question.number}`]}
                     questionNumber={question.number}
                     questionTitle={question.title}
                   />
@@ -234,7 +303,7 @@ export default function MyForm() {
             <div className="questions-table-two">
               {questionsPart2.map((question) => (
                 <Box key={question.number} className="container-select">
-                  <p>{question.title}</p>
+                  <span className="title">{question.title}</span>
                   <SelectWithPlaceholder
                     value={questions[`question${question.number}`]?.value || ""}
                     onChange={(event) =>
@@ -250,6 +319,7 @@ export default function MyForm() {
                       { value: 1, label: pt_BR.textYes },
                       { value: 0, label: pt_BR.textNo },
                     ]}
+                    error={questionErrors[`question${question.number}`]}
                     questionNumber={question.number}
                     questionTitle={question.title}
                   />
