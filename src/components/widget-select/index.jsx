@@ -16,10 +16,20 @@ const SelectWithPlaceholder = ({
   questionTitle,
   error,
 }) => {
+  const maxHeight = options.length > 5 ? "400px" : "unset";
+
   return (
     <Box sx={{ minWidth: 100 }}>
       <FormControl fullWidth className={`form-control${error ? " error" : ""}`}>
-        <InputLabel id={`select-placeholder-label-${questionNumber}`}>
+        <InputLabel
+          id={`select-placeholder-label-${questionNumber}`}
+          sx={{
+            fontSize: "12px",
+            "@media (max-width: 764px)": {
+              fontSize: "13px",
+            },
+          }}
+        >
           {placeholder}
         </InputLabel>
         <Select
@@ -30,6 +40,29 @@ const SelectWithPlaceholder = ({
           label={placeholder}
           onChange={(event) => onChange(event, questionNumber, questionTitle)}
           error={error}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "left",
+            },
+            transformOrigin: {
+              vertical: "top",
+              horizontal: "left",
+            },
+            getContentAnchorEl: null,
+            PaperProps: {
+              sx: {
+                maxHeight: maxHeight,
+                width: "200px",
+                overflowY: "auto",
+              },
+            },
+          }}
+          sx={{
+            "@media (max-width: 764px)": {
+              width: "200px",
+            },
+          }}
         >
           <MenuItem disabled value="">
             <em>{placeholder}</em>

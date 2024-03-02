@@ -1,7 +1,6 @@
-export const textRnaTitle = 'Título do sistema RNA que faz a predicação de dados';
-export const textRnaSubtitle = 'ESBL e CRE.';
-export const TextInfoRna = 'Descrição do sistema, da forma de usar, como gerar ESBL ou CRE ou os dois.';
-export const textTitleQuestions = 'Selecione as respostasa para as perguntas a seguir:'
+export const textRnaTitle = 'RNA para prever infecções do trato urinário causadas por bactérias multirresistentes';
+export const TextInfoRna = 'RNA desenvolvida para prever infecções do trato urinário (ITU) causadas por bactérias ESBL ou CRE visando auxiliar o médico na tomada de decisão.';
+export const textTitleQuestions = 'Para calcular a probalidade do paciente ter uma ITU por ESBL ou CRE, por favor preencha o formulário abaixo com os dados do paciente.'
 export const textEnterName = 'Nome:';
 export const textEnterYourAge = 'Informe a idade:';
 export const textSelectYourAge = 'Selecione a sua idade:';

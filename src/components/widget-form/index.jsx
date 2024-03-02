@@ -85,7 +85,13 @@ export default function MyForm() {
         Gestante: questions.question18?.value,
         Neoplasias: questions.question19?.value,
       };
-      console.log("lista: ", itemsToSend);
+
+      for (const key in itemsToSend) {
+        if (itemsToSend[key] === 2) {
+          itemsToSend[key] = 0;
+        }
+      }
+      console.log("lista depois do for: ", { itemsToSend });
       // try {
       //   const response = await fetch("sua/api/endpoint", {
       //     method: "POST",
@@ -202,7 +208,6 @@ export default function MyForm() {
       <div className="container-header">
         <div className="header-rna">
           <h1>{pt_BR.textRnaTitle}</h1>
-          <h2>{pt_BR.textRnaSubtitle}</h2>
           <span>{pt_BR.TextInfoRna}</span>
         </div>
       </div>
@@ -288,7 +293,7 @@ export default function MyForm() {
                     options={[
                       { value: "", label: pt_BR.textReponseSelect },
                       { value: 1, label: pt_BR.textYes },
-                      { value: 0, label: pt_BR.textNo },
+                      { value: 2, label: pt_BR.textNo },
                     ]}
                     error={questionErrors[`question${question.number}`]}
                     questionNumber={question.number}
@@ -317,7 +322,7 @@ export default function MyForm() {
                     options={[
                       { value: "", label: pt_BR.textReponseSelect },
                       { value: 1, label: pt_BR.textYes },
-                      { value: 0, label: pt_BR.textNo },
+                      { value: 2, label: pt_BR.textNo },
                     ]}
                     error={questionErrors[`question${question.number}`]}
                     questionNumber={question.number}
