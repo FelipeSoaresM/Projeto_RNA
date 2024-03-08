@@ -63,6 +63,62 @@ body {
       }
     }
 
+    .title-prediction {
+      display: flex;
+      justify-content: center;
+
+      h1 {
+        font-size: 25px;
+      }
+    }
+    .container-info {
+      padding: 0px 30px 30px 30px;
+      display: flex;
+      flex-direction: column;
+
+      .box-info-rna {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        h2 {
+          font-size: 18px;
+        }
+        p {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .btn-container-restart {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 0 30px 0;
+
+      .btn-restart {
+        background-color: #00a67e;
+        border: 1px solid #00a67e;
+        &:hover {
+          background-color: white;
+          span {
+            color: #00a67e;
+          }
+        }
+        @media (max-width: 764px) {
+          border-radius: 50px;
+          height: 45px;
+        }
+        span {
+          color: white;
+          @media (max-width: 764px) {
+            font-size: 12px;
+            padding: 8px;
+          }
+        }
+      }
+    }
+
     .container-box-one {
       .select-age_gender_medications,
       .questions-table-one {

@@ -25,6 +25,8 @@ export default function MyForm() {
   const [questionErrors, setQuestionErrors] = useState({});
   const [medicationError, setMedicationError] = useState(false);
   const [genderError, setGenderError] = useState(false);
+  const [predictions, setPredictions] = useState(null);
+  const [showForm, setShowForm] = useState(true);
 
   const handleQuestionChange = (event, questionNumber, questionTitle) => {
     const { value } = event.target;
@@ -52,21 +54,21 @@ export default function MyForm() {
 
   const handleGenderChange = (event) => {
     const selectedGender = event.target.value;
-    const genderValue = selectedGender === "male" ? 0 : 1;
-    setGender(genderValue);
+    setGender(selectedGender);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
     const unansweredQuestions = findUnansweredQuestions();
 
     if (unansweredQuestions.length === 0) {
       const itemsToSend = {
         Sexo: gender,
         Idade: age,
-        Classificação: questions.question1?.value,
-        ITU_repetição: questions.question2?.value,
-        Hospitalização_Previa: questions.question3?.value,
+        Classificacao: questions.question1?.value,
+        ITU_repeticao: questions.question2?.value,
+        Hospitalizacao_previa: questions.question3?.value,
         Permanencia_UTI: questions.question4?.value,
         Uso_previo_antibiotico: questions.question5?.value,
         Qual_antibiotico: selectedMedication,
@@ -92,25 +94,28 @@ export default function MyForm() {
         }
       }
       console.log("lista depois do for: ", { itemsToSend });
-      // try {
-      //   const response = await fetch("sua/api/endpoint", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(itemsToSend),
-      //   });
+      try {
+        const response = await fetch("http://127.0.0.1:5000/prediction", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(itemsToSend),
+        });
 
-      //   if (!response.ok) {
-      //     throw new Error("Erro ao enviar os dados para a API");
-      //   }
+        if (!response.ok) {
+          throw new Error("Erro ao enviar os dados para a API");
+        }
 
-      //   const responseData = await response.json();
-      //   console.log("Resposta da API:", responseData);
-
-      // } catch (error) {
-      //   console.error(`Erro ao enviar os dados para a API: ${error.message}`);
-      // }
+        const responseData = await response.json();
+        console.log({responseData});
+        setPredictions(responseData);
+        setShowForm(false);
+      } catch (error) {
+        console.error(`Erro ao enviar os dados para a API: ${error.message}`);
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       validateGender();
       validateAge();
@@ -199,8 +204,15 @@ export default function MyForm() {
     const delay = setTimeout(() => {
       setIsLoading(false);
       clearTimeout(delay);
-    }, 3000);
+    }, 1000);
+    return () => clearTimeout(delay);
   }, []);
+
+  const handleRestartForm = () => {
+    setShowForm(true);
+    setPredictions(null);
+    handleClearForm();
+  };
 
   return (
     <div className="form-container">
@@ -212,145 +224,170 @@ export default function MyForm() {
         </div>
       </div>
 
-      <form className="container" onSubmit={handleSubmit}>
-        <div className="questions-container">
-          <div className="box-title-questions">
-            <span>{pt_BR.textTitleQuestions}</span>
+      {predictions && (
+        <div className="container">
+          <div className="title-prediction">
+            <h1>{pt_BR.titlePrediction}</h1>
           </div>
-          <div className="container-box-one">
-            <div className="select-age_gender_medications">
-              <Box className="container-select">
-                <span className="title">{pt_BR.textGender}</span>
-                <SelectWithPlaceholder
-                  id="gender"
-                  value={gender}
-                  onChange={handleGenderChange}
-                  placeholder={pt_BR.textSelectGender}
-                  options={[
-                    { value: "", label: pt_BR.textSelectGender },
-                    { value: 1, label: pt_BR.textMale },
-                    { value: 0, label: pt_BR.textFemale },
-                  ]}
-                  error={genderError || gender === null || gender === undefined}
-                />
-              </Box>
-
-              <Box className="container-select">
-                <span className="title">{pt_BR.textEnterYourAge}</span>
-                <SelectWithPlaceholder
-                  id="age"
-                  value={age}
-                  onChange={handleAgeChange}
-                  placeholder={pt_BR.textSelectYourAge}
-                  options={[
-                    { value: "", label: pt_BR.textSelectYourAge },
-                    ...Array.from({ length: 101 }, (_, i) => ({
-                      value: i,
-                      label: i,
-                    })),
-                  ]}
-                  error={ageError || age === null || age === undefined}
-                />
-              </Box>
-
-              <Box className="container-select">
-                <span className="title">{pt_BR.textSelectMedication}</span>
-                <SelectWithPlaceholder
-                  id="selectedMedication"
-                  value={selectedMedication}
-                  onChange={handleMedicationChange}
-                  placeholder={pt_BR.textSelectMedicationOption}
-                  options={[
-                    { value: "", label: pt_BR.textSelectMedicationOption },
-                    ...medications.map((medication, index) => ({
-                      value: index,
-                      label: medication,
-                    })),
-                  ]}
-                  error={
-                    medicationError ||
-                    selectedMedication === null ||
-                    selectedMedication === undefined
-                  }
-                />
-              </Box>
+          <div className="container-info">
+            <div className="box-info-rna">
+              <h2>{pt_BR.textPredictionCRE}</h2>
+              <p>{predictions.prediction_cre}</p>
             </div>
-
-            <div className="questions-table-one">
-              {questionsPart1.map((question) => (
-                <Box key={question.number} className="container-select">
-                  <span className="title">{question.title}</span>
-                  <SelectWithPlaceholder
-                    value={questions[`question${question.number}`]?.value || ""}
-                    onChange={(event) =>
-                      handleQuestionChange(
-                        event,
-                        question.number,
-                        question.title
-                      )
-                    }
-                    placeholder={pt_BR.textReponseSelect}
-                    options={[
-                      { value: "", label: pt_BR.textReponseSelect },
-                      { value: 1, label: pt_BR.textYes },
-                      { value: 2, label: pt_BR.textNo },
-                    ]}
-                    error={questionErrors[`question${question.number}`]}
-                    questionNumber={question.number}
-                    questionTitle={question.title}
-                  />
-                </Box>
-              ))}
+            <div className="box-info-rna">
+              <h2>{pt_BR.textPredictionESBL}</h2>
+              <p>{predictions.prediction_esbl}</p>
             </div>
           </div>
-
-          <div className="container-box-two">
-            <div className="questions-table-two">
-              {questionsPart2.map((question) => (
-                <Box key={question.number} className="container-select">
-                  <span className="title">{question.title}</span>
-                  <SelectWithPlaceholder
-                    value={questions[`question${question.number}`]?.value || ""}
-                    onChange={(event) =>
-                      handleQuestionChange(
-                        event,
-                        question.number,
-                        question.title
-                      )
-                    }
-                    placeholder={pt_BR.textReponseSelect}
-                    options={[
-                      { value: "", label: pt_BR.textReponseSelect },
-                      { value: 1, label: pt_BR.textYes },
-                      { value: 2, label: pt_BR.textNo },
-                    ]}
-                    error={questionErrors[`question${question.number}`]}
-                    questionNumber={question.number}
-                    questionTitle={question.title}
-                  />
-                </Box>
-              ))}
-            </div>
-          </div>
-          <div className="error-message">
-            {errorMessage && <p>{errorMessage}</p>}
-          </div>
-          <div className="container-buttons">
-            <Box>
-              <Button
-                className="btn-container clean"
-                variant="contained"
-                onClick={handleClearForm}
-              >
-                <span>{pt_BR.textClearForm}</span>
-              </Button>
-            </Box>
-            <Button className="btn-container send" type="submit">
-              <span>{pt_BR.textSubmit}</span>
+          <div className="btn-container-restart">
+            <Button className="btn-restart" onClick={() => handleRestartForm()}>
+              <span>{pt_BR.textButtonReturnForm}</span>
             </Button>
           </div>
         </div>
-      </form>
+      )}
+      {showForm && (
+        <form className="container" onSubmit={handleSubmit}>
+          <div className="questions-container">
+            <div className="box-title-questions">
+              <span>{pt_BR.textTitleQuestions}</span>
+            </div>
+            <div className="container-box-one">
+              <div className="select-age_gender_medications">
+                <Box className="container-select">
+                  <span className="title">{pt_BR.textGender}</span>
+                  <SelectWithPlaceholder
+                    id="gender"
+                    value={gender}
+                    onChange={handleGenderChange}
+                    placeholder={pt_BR.textSelectGender}
+                    options={[
+                      { value: 2, label: pt_BR.textMale },
+                      { value: 1, label: pt_BR.textFemale },
+                    ]}
+                    error={
+                      genderError || gender === null || gender === undefined
+                    }
+                  />
+                </Box>
+
+                <Box className="container-select">
+                  <span className="title">{pt_BR.textEnterYourAge}</span>
+                  <SelectWithPlaceholder
+                    id="age"
+                    value={age}
+                    onChange={handleAgeChange}
+                    placeholder={pt_BR.textSelectYourAge}
+                    options={[
+                      ...Array.from({ length: 101 }, (_, i) => ({
+                        value: i,
+                        label: i,
+                      })),
+                    ]}
+                    error={ageError || age === null || age === undefined}
+                  />
+                </Box>
+
+                <Box className="container-select">
+                  <span className="title">{pt_BR.textSelectMedication}</span>
+                  <SelectWithPlaceholder
+                    id="selectedMedication"
+                    value={selectedMedication}
+                    onChange={handleMedicationChange}
+                    placeholder={pt_BR.textSelectMedicationOption}
+                    options={[
+                      ...medications.map((medication, index) => ({
+                        value: index,
+                        label: medication,
+                      })),
+                    ]}
+                    error={
+                      medicationError ||
+                      selectedMedication === null ||
+                      selectedMedication === undefined
+                    }
+                  />
+                </Box>
+              </div>
+
+              <div className="questions-table-one">
+                {questionsPart1.map((question) => (
+                  <Box key={question.number} className="container-select">
+                    <span className="title">{question.title}</span>
+                    <SelectWithPlaceholder
+                      value={
+                        questions[`question${question.number}`]?.value || ""
+                      }
+                      onChange={(event) =>
+                        handleQuestionChange(
+                          event,
+                          question.number,
+                          question.title
+                        )
+                      }
+                      placeholder={pt_BR.textReponseSelect}
+                      options={[
+                        { value: 1, label: pt_BR.textYes },
+                        { value: 2, label: pt_BR.textNo },
+                      ]}
+                      error={questionErrors[`question${question.number}`]}
+                      questionNumber={question.number}
+                      questionTitle={question.title}
+                    />
+                  </Box>
+                ))}
+              </div>
+            </div>
+
+            <div className="container-box-two">
+              <div className="questions-table-two">
+                {questionsPart2.map((question) => (
+                  <Box key={question.number} className="container-select">
+                    <span className="title">{question.title}</span>
+                    <SelectWithPlaceholder
+                      value={
+                        questions[`question${question.number}`]?.value || ""
+                      }
+                      onChange={(event) =>
+                        handleQuestionChange(
+                          event,
+                          question.number,
+                          question.title
+                        )
+                      }
+                      placeholder={pt_BR.textReponseSelect}
+                      options={[
+                        { value: 1, label: pt_BR.textYes },
+                        { value: 2, label: pt_BR.textNo },
+                      ]}
+                      error={questionErrors[`question${question.number}`]}
+                      questionNumber={question.number}
+                      questionTitle={question.title}
+                    />
+                  </Box>
+                ))}
+              </div>
+            </div>
+            <div className="error-message">
+              {errorMessage && <p>{errorMessage}</p>}
+            </div>
+            <div className="container-buttons">
+              <Box>
+                <Button
+                  className="btn-container clean"
+                  variant="contained"
+                  onClick={handleClearForm}
+                >
+                  <span>{pt_BR.textClearForm}</span>
+                </Button>
+              </Box>
+              <Button className="btn-container send" type="submit">
+                <span>{pt_BR.textSubmit}</span>
+              </Button>
+            </div>
+          </div>
+        </form>
+      )}
     </div>
   );
 }
