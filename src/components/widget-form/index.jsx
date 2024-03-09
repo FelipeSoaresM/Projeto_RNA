@@ -1,10 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-//import TextField from "@mui/material/TextField";
-// import Select from "@mui/material/Select";
-// import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
-// import FormControlLabel from "@mui/material/FormControlLabel";
-// import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
 import medications from "../../locales/medications";
 import { questionsPart1, questionsPart2 } from "../../locales/questions";
@@ -232,11 +227,12 @@ export default function MyForm() {
           <div className="container-info">
             <div className="box-info-rna">
               <h2>{pt_BR.textPredictionCRE}</h2>
-              <p>{predictions.prediction_cre}</p>
+              <p>{(predictions.prediction_cre * 100).toFixed(2)}%</p>
+
             </div>
             <div className="box-info-rna">
               <h2>{pt_BR.textPredictionESBL}</h2>
-              <p>{predictions.prediction_esbl}</p>
+              <p>{(predictions.prediction_esbl * 100).toFixed(2)}%</p>
             </div>
           </div>
           <div className="btn-container-restart">
