@@ -15,6 +15,8 @@ export default function MyForm() {
   const [questions, setQuestions] = useState({});
   const [selectedMedication, setSelectedMedication] = useState("");
   const [gender, setGender] = useState("");
+  const [previousMedicationUse, setPreviousMedicationUse] = useState("");
+  const [medicationUseError, setMedicationUseError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [ageError, setAgeError] = useState(false);
   const [questionErrors, setQuestionErrors] = useState({});
@@ -43,6 +45,10 @@ export default function MyForm() {
     setSelectedMedication(event.target.value);
   };
 
+  const handleMedicationUseChange = (event) => {
+    setPreviousMedicationUse(event.target.value);
+  };
+
   const handleAgeChange = (event) => {
     setAge(event.target.value);
   };
@@ -54,7 +60,6 @@ export default function MyForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setIsLoading(true);
     const unansweredQuestions = findUnansweredQuestions();
 
     if (unansweredQuestions.length === 0) {
@@ -88,8 +93,10 @@ export default function MyForm() {
           itemsToSend[key] = 0;
         }
       }
-      console.log("lista depois do for: ", { itemsToSend });
+
       try {
+        setIsLoading(true);
+
         const response = await fetch("http://127.0.0.1:5000/prediction", {
           method: "POST",
           headers: {
@@ -103,7 +110,6 @@ export default function MyForm() {
         }
 
         const responseData = await response.json();
-        console.log({responseData});
         setPredictions(responseData);
         setShowForm(false);
       } catch (error) {
@@ -112,6 +118,10 @@ export default function MyForm() {
         setIsLoading(false);
       }
     } else {
+      // Se houver campos não respondidos, definir setErrorMessage como true
+      setErrorMessage(true);
+
+      validatePreviousMedicationUse();
       validateGender();
       validateAge();
       validateMedication();
@@ -147,6 +157,11 @@ export default function MyForm() {
     setSelectedMedication("");
     setGender("");
     setErrorMessage("");
+    setQuestionErrors({});
+    setMedicationUseError(false);
+    setGenderError(false);
+    setMedicationError(false);
+    setAgeError(false);
   };
 
   const validateGender = useCallback(() => {
@@ -170,6 +185,24 @@ export default function MyForm() {
       setAgeError(false);
     }
   }, [age]);
+
+  const validatePreviousMedicationUse = useCallback(() => {
+    if (
+      previousMedicationUse === "" ||
+      previousMedicationUse === null ||
+      previousMedicationUse === undefined
+    ) {
+      setMedicationUseError(true);
+    } else {
+      setMedicationUseError(false);
+    }
+  }, [previousMedicationUse]);
+
+  useEffect(() => {
+    if (previousMedicationUse !== "") {
+      validatePreviousMedicationUse();
+    }
+  });
 
   useEffect(() => {
     if (age !== "") {
@@ -228,7 +261,6 @@ export default function MyForm() {
             <div className="box-info-rna">
               <h2>{pt_BR.textPredictionCRE}</h2>
               <p>{(predictions.prediction_cre * 100).toFixed(2)}%</p>
-
             </div>
             <div className="box-info-rna">
               <h2>{pt_BR.textPredictionESBL}</h2>
@@ -281,6 +313,25 @@ export default function MyForm() {
                       })),
                     ]}
                     error={ageError || age === null || age === undefined}
+                  />
+                </Box>
+
+                <Box className="container-select">
+                  <span className="title">Uso prévio de Medicamento:</span>
+                  <SelectWithPlaceholder
+                    id="medicationUse"
+                    value={previousMedicationUse}
+                    onChange={handleMedicationUseChange}
+                    placeholder={pt_BR.textReponseSelect}
+                    options={[
+                      { value: 1, label: pt_BR.textYes },
+                      { value: 2, label: pt_BR.textNo },
+                    ]}
+                    error={
+                      medicationUseError ||
+                      previousMedicationUse === null ||
+                      previousMedicationUse === undefined
+                    }
                   />
                 </Box>
 
@@ -365,7 +416,7 @@ export default function MyForm() {
               </div>
             </div>
             <div className="error-message">
-              {errorMessage && <p>{errorMessage}</p>}
+              {errorMessage && <p>Responda todos os campos para continuar!</p>}
             </div>
             <div className="container-buttons">
               <Box>
