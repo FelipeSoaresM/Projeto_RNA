@@ -124,6 +124,18 @@ body {
         flex-wrap: nowrap;
         justify-content: center;
 
+        @media (max-width: 764px) {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          display: grid;
+
+          .container-select {
+            width: 100% !important;
+            margin-left: 0;
+          }
+        }
+
         .container-select {
           width: calc(23.33% - 10px);
           margin-bottom: 20px;
@@ -155,7 +167,7 @@ body {
           .title {
             font-size: 11px;
             @media (max-width: 764px) {
-              font-size: 14px;
+              font-size: 12px;
             }
           }
 
@@ -168,10 +180,13 @@ body {
       @media (max-width: 764px) {
         flex-direction: column;
         align-items: center;
+        display: grid;
 
         .container-select {
-          width: 100%;
+          width: 100% !important;
           margin-left: 0;
+          display: grid;
+          justify-content: center;
         }
       }
     }
@@ -181,11 +196,16 @@ body {
     .questions-table-two {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-start;
       .container-select {
-        width: calc(23.33% - 10px);
+        width: calc(23.33% - 4px);
         margin-bottom: 20px;
-        margin-left: 15px;
+        margin-left: 12px;
+
+        @media (max-width: 1300px) {
+          width: calc(23.33% + 0px);
+          margin-left: 9px;
+        }
         .title {
           font-size: 11px;
           @media (max-width: 764px) {
@@ -200,14 +220,20 @@ body {
 
     @media (max-width: 764px) {
       .questions-table-two {
-        flex-direction: column;
         align-items: center;
+        display: grid;
+        justify-content: center;
         .container-select {
           width: 100%;
           margin-left: 0;
+          display: grid;
         }
       }
     }
+  }
+
+  .error-message {
+    color: red;
   }
 
   .container-buttons {

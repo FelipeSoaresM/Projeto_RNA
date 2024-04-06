@@ -19,7 +19,13 @@ const SelectWithPlaceholder = ({
   const maxHeight = options.length > 5 ? "400px" : "unset";
 
   return (
-    <Box sx={{ maxWidth: 170, marginTop: '5px'  }}>
+    <Box   sx={{
+      maxWidth: 170,
+      marginTop: '5px',
+      // '@media (max-width: 1300px)': {
+      //   maxWidth: 150,
+      // },
+    }}>
       <FormControl fullWidth className={`form-control${error ? " error" : ""}`}>
         <InputLabel
           id={`select-placeholder-label-${questionNumber}`}
