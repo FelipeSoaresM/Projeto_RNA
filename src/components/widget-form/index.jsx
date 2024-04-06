@@ -97,7 +97,7 @@ export default function MyForm() {
       try {
         setIsLoading(true);
 
-        const response = await fetch("http://127.0.0.1:5000/prediction", {
+        const response = await fetch("https://rna-4845.onrender.com/prediction", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
